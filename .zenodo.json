@@ -1,0 +1,18 @@
+{
+    "creators": [
+        {
+            "affiliation": "NTNU",
+            "name": "Jackaman, James",
+            "orcid": "0000-0003-2189-9732"
+        },
+	{
+	    "affiliation": "NTNU",
+	    "name": "Murari, Davide",
+	    "orcid": "0000-0002-1095-6685"
+	}
+    ],
+    "description": "Code suppliment to `Predictions based on pixel data: Insights from PDEs and finite differences' by Celledoni, Jackaman, Murari and Owren.",
+    "license": "MIT",
+    "title": "Implementation used in `Predictions based on pixel data: Insights from PDEs and finite differences'",
+    "upload_type": "software"
+}
