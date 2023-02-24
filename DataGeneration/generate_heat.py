@@ -15,7 +15,7 @@ def checkrunning():
     return len(Processes)
 
 
-iterations = 30 #number of data to generate
+iterations = 1000 #number of data to generate
 
 #generate
 for i in range(iterations):
@@ -46,7 +46,7 @@ for i in range(iterations):
         
 
 #Save
-filename = 'data_heat_faster_verification.pickle'
+filename = 'data_heat.pickle'
 file = open(filename,'wb')
 pickle.dump(dict,file)
 file.close()

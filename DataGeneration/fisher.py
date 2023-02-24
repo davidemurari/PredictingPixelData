@@ -39,7 +39,7 @@ class parameters:
         self.M = 100 #Spatial resolution
         dx = 1/self.M
         self.dt = 0.24 * dx**2 / self.alpha
-        self.N = 50 #Temporal resolution
+        self.N = 10 #Temporal resolution
         self.degree = 1 #Spatial degree
         self.T = self.N*self.dt #End time
         

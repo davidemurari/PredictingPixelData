@@ -35,10 +35,10 @@ def matrify(fd,para):
 #Define global parameters here
 class parameters:
     def __init__(self):
-        self.N = 50 #Temporal resolution
+        self.N = 10 #Temporal resolution
         self.M = 100 #Spatial resolution
         self.degree = 1 #Spatial degree
-        self.T = 1 #End time
+        self.T = 0.2 #End time
         self.dt = self.T/self.N #time step (should not be changed
                                 #independently of N and T)
         self.c = as_vector((1,1)) #Advection vector (assumed fixed globally for
