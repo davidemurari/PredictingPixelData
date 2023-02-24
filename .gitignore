@@ -1,0 +1,7 @@
+#Ignore things starting or ending with underscores
+_*
+*_
+
+#Ignore output files
+*.pickle
+*.pdf
