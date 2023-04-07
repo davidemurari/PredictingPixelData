@@ -5,14 +5,6 @@ import torch.optim as optim
 import numpy as np
 import matplotlib
 
-matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']
-matplotlib.rcParams['font.size']=45
-matplotlib.rcParams['font.family']= 'ptm' #'Times New Roman
-
-torch.manual_seed(7)
-np.random.seed(7)
-
 from utils import relu_squared
 from create_dataset import get_train_test_split
 from generate_network import get_network
@@ -24,6 +16,16 @@ import get_data #downloads the missing data
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+#Setting the parameters for the plots
+matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']
+matplotlib.rcParams['font.size']=45
+matplotlib.rcParams['font.family']= 'ptm' #'Times New Roman
+
+torch.manual_seed(7)
+np.random.seed(7)
+
+#Asking the parameters to the user
 check = True
 while check:
     pde_name = input("Enter the pde you want (choose among 'linadv', 'heat', 'fisher'):\n")
@@ -32,7 +34,11 @@ while check:
     else:
         print("Wrong name, please type it again")
 
-timesteps = int(input("Enter how many timesteps you want in the training data (1<=t<=5):\n"))
+timesteps = 6
+while timesteps>5 or timesteps<1:
+    timesteps = int(input("Enter how many timesteps you want in the training data (1<=t<=5):\n"))
+    if timesteps>5 or timesteps<1:
+        print("Wrong range. The data is available only for 1<=timesteps<=5")
 
 #Set to True to use projected Euler, to False to use explicit Euler
 conserve_norm = None
@@ -42,6 +48,8 @@ if pde_name=='linadv':
         conserve_norm = True
     elif conserve_norm=="no":
         conserve_norm = False
+    else:
+        print("Not a recognized input. We thus set conserve_norm to False and train with explicit Euler")
 
 #Set to pretrained to use the models trained for the paper
 train = input("Do you want to train a new model or use a pre-trained one? ('train','pretrained'):\n")
@@ -91,6 +99,7 @@ else:
         model.load_state_dict(torch.load(f"pretrained_models/trained_model_{pde_name}.pt",map_location=torch.device(device)))
 
 
+#Plotting part
 showPlots = input("Write yes to plot the errors: ")=="yes"
 
 if showPlots:
