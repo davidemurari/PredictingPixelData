@@ -213,7 +213,7 @@ We group together these three scripts because they all have the same structure. 
 
 - Class : relu_squared
   
-  - Implementation of the activation function $\max{0,x}^2$ based on *nn.Module*.
+  - Implementation of the activation function $\max(0,x)^2$ based on *nn.Module*.
 
 ## Data
 
