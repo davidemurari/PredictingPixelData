@@ -5,3 +5,6 @@ _*
 #Ignore output files
 *.pickle
 *.pdf
+
+#Ignore hidden file
+.DS_Store
