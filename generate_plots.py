@@ -97,14 +97,8 @@ def generate_gif_error(pde_name,model,X,Y,timesteps_test):
 #store in these files the mean of such values
 def save_test_results(pde_name,model,testloader,preserve_norm=None):
     
-    try:
-        os.chdir('saved_test_results')
-    except:
-        working_directory = os.getcwd()
+    if not os.path.exists('saved_test_results'):
         os.mkdir('saved_test_results')
-        os.chdir('saved_test_results')
-        os.chdir(working_directory)
-    
     
     if pde_name!='linadv':
         if preserve_norm!=None:
@@ -150,7 +144,7 @@ def save_test_results(pde_name,model,testloader,preserve_norm=None):
         np.savetxt(f"saved_test_results/{pde_name}_MaxError_Test30.csv", max_errorList, delimiter=",")
         np.savetxt(f"saved_test_results/{pde_name}_RelativeError_Test30.csv", relative_error_list, delimiter=",")
         
-    
+    print("Results saved or updated in the directory 'saved_test_results'")
     
 def generate_error_plots(pde_name,model,testloader,preserve_norm=None):
     
@@ -161,27 +155,22 @@ def generate_error_plots(pde_name,model,testloader,preserve_norm=None):
     namePlots = ["MaxError", "AverageMSE", "RelativeError"]
     labels = [r"$\texttt{maxE}(j)$", r"$\texttt{mse}(j)$", r"$\texttt{rE}(j)$"]
     
-    try:
-        os.chdir('saved_plots')
-    except:
-        working_directory = os.getcwd()
+    if not os.path.exists('saved_plots'):
         os.mkdir('saved_plots')
-        os.chdir('saved_plots')
-        os.chdir(working_directory)
     
     #Generation of the plots for the 3 different PDEs
     if pde_name=="linadv":
         for it, name in enumerate(namePlots):
             is_data_constr = False
-            is_data_unconstr = None
+            is_data_unconstr = False
             
             try:
-                dfConstr = pd.read_csv(f'saved_test_results/linadv_{name}_Conserved_Test30.csv',header=None)
+                dfConstr = pd.read_csv(f'saved_test_results/{pde_name}_{name}_Conserved_Test30.csv',header=None)
                 is_data_constr = True
             except:
                 print(f"Missing data for the {name} of the conserved case")
             try:
-                dfUnconstr = pd.read_csv(f'saved_test_results/linadv_{name}_NonConserved_Test30.csv',header=None)
+                dfUnconstr = pd.read_csv(f'saved_test_results/{pde_name}_{name}_NonConserved_Test30.csv',header=None)
                 is_data_unconstr = True
             except:
                 print(f"Missing data for the {name} of the non conserved case")
@@ -237,3 +226,4 @@ def generate_error_plots(pde_name,model,testloader,preserve_norm=None):
                 plt.savefig(f"saved_plots/{pde_name}_{name}_BatchOf30.pdf", format="pdf",bbox_inches='tight')
             else:
                 print(f"There is nothing saved to generate the plots of {name} in {pde_name}")
+    print("Plots saved or updated in the directory 'saved plots'")

@@ -12,7 +12,7 @@ from training import train as train_network
 from generate_plots import generate_gif_predicted, generate_gif_true, generate_gif_error
 from generate_plots import generate_error_plots
 
-import get_data #downloads the missing data
+from get_data import download_data #downloads the missing data
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -34,12 +34,6 @@ while check:
     else:
         print("Wrong name, please type it again")
 
-timesteps = 6
-while timesteps>5 or timesteps<1:
-    timesteps = int(input("Enter how many timesteps you want in the training data (1<=t<=5):\n"))
-    if timesteps>5 or timesteps<1:
-        print("Wrong range. The data is available only for 1<=timesteps<=5")
-
 #Set to True to use projected Euler, to False to use explicit Euler
 conserve_norm = None
 if pde_name=='linadv':
@@ -55,8 +49,16 @@ if pde_name=='linadv':
 train = input("Do you want to train a new model or use a pre-trained one? ('train','pretrained'):\n")
 if train=="train":
     train = True
+    timesteps = 6
+    while timesteps>5 or timesteps<1:
+        timesteps = int(input("Enter how many timesteps you want in the training data (1<=t<=5):\n"))
+        if timesteps>5 or timesteps<1:
+            print("Wrong range. The data is available only for 1<=timesteps<=5")
 elif train=="pretrained":
     train = False
+    timesteps = 5
+
+download_data(pde_name)
 
 #Split of the data points into train and test set
 trainset, testset = get_train_test_split(pde_name,timesteps=timesteps,device=device)
