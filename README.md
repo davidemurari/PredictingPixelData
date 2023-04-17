@@ -219,4 +219,4 @@ We group together these three scripts because they all have the same structure. 
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7665159.svg)](https://doi.org/10.5281/zenodo.7665159)
 
-The data used in this repository can be found on [Zenodo](https://doi.org/10.5281/zenodo.7665159). For completeness, we include the data generation routine in the subfolder `DataGeneration`. To read more about the data generation procedure [click here](DataGeneration/README.md).
+The data used in this repository can be found on [Zenodo](https://doi.org/10.5281/zenodo.7665159). For completeness, we include the data generation routine in the subfolder `data_generation`. To read more about the data generation procedure [click here](data_generation/README.md).
