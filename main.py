@@ -18,7 +18,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 #Setting the parameters for the plots
 matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']
+matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
 matplotlib.rcParams['font.size']=45
 matplotlib.rcParams['font.family']= 'ptm' #'Times New Roman
 
@@ -80,7 +80,7 @@ testloader = torch.utils.data.DataLoader(testset,batch_size=30,shuffle=True,num_
 
 if train:
     #Train the model
-    train_network(model,lr,weight_decay,epochs,trainloader,timesteps=5)
+    train_network(model,lr,weight_decay,epochs,trainloader,timesteps=timesteps)
    
     #Save the trained model
     if pde_name=="linadv":

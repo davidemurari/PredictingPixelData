@@ -10,7 +10,7 @@ import os
 
 #Setting the plotting parameters
 matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}']
+matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
 matplotlib.rcParams['font.size']= 45
 matplotlib.rcParams['font.family']= 'ptm' #'Times New Roman
 
