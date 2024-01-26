@@ -6,5 +6,8 @@ _*
 *.pickle
 *.pdf
 
+#Ignore notebooks
+*.ipynb
+
 #Ignore hidden file
 .DS_Store

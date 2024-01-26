@@ -18,6 +18,9 @@ matplotlib.rcParams['font.family']= 'ptm' #'Times New Roman
 #for timesteps_test steps of size dt
 def generate_gif_predicted(pde_name,model,X,timesteps_test):
     
+    if not os.path.exists('saved_plots'):
+        os.mkdir('saved_plots')
+    
     plt.rcParams["figure.autolayout"] = True
     fig = plt.figure(figsize=(10,10))
 
@@ -28,7 +31,7 @@ def generate_gif_predicted(pde_name,model,X,timesteps_test):
     def animate(i):
         cax.cla()
         res = X.clone()
-        res = res.unsqueeze(0)
+        res = (res.unsqueeze(0))
         for j in range(i):
             res = model(res)
         res = res[0].detach().cpu().numpy()
@@ -38,12 +41,15 @@ def generate_gif_predicted(pde_name,model,X,timesteps_test):
 
     ani = animation.FuncAnimation(fig, animate, frames=timesteps_test)
     ani.save(f"saved_plots/predicted_{pde_name}.gif", writer='pillow')
-
+      
 #Show the true time evolution of the difference between
 #the true and predicted time evolutions for timesteps_test steps
-#of size dt, startinf from the initial condition X
-
+#of size dt, starting from the initial condition X
 def generate_gif_true(pde_name,X,Y,timesteps_test):
+    
+    if not os.path.exists('saved_plots'):
+        os.mkdir('saved_plots')
+    
     plt.rcParams["figure.autolayout"] = True
 
     Traj = torch.cat((X,Y),dim=0)
@@ -56,15 +62,18 @@ def generate_gif_true(pde_name,X,Y,timesteps_test):
 
     def animate(i):
         cax.cla()
-        im = ax.imshow(Traj[i].detach().cpu().numpy(), cmap = 'hot')
+        im = ax.imshow((Traj[i]).detach().cpu().numpy(), cmap = 'hot')
         fig.colorbar(im,cax=cax)
         ax.set_title('True dynamics, Frame {0}'.format(i))
     ani = animation.FuncAnimation(fig, animate, frames=timesteps_test)
     ani.save(f"saved_plots/true_{pde_name}.gif", writer='pillow')
-
+    
 #Show the time evolution of the initial condition X
 #for timesteps_test steps of size dt
 def generate_gif_error(pde_name,model,X,Y,timesteps_test):
+    
+    if not os.path.exists('saved_plots'):
+        os.mkdir('saved_plots')
     
     dim = X.shape[0]
     
@@ -80,7 +89,7 @@ def generate_gif_error(pde_name,model,X,Y,timesteps_test):
     def animate(i):
         cax.cla()
         res = X.clone()
-        res = res.unsqueeze(0)
+        res = (res.unsqueeze(0))
         for j in range(i):
             res = model(res)
         res = res[0,0]
@@ -90,12 +99,12 @@ def generate_gif_error(pde_name,model,X,Y,timesteps_test):
 
     ani = animation.FuncAnimation(fig, animate, frames=timesteps_test)
     ani.save(f"saved_plots/error_{pde_name}.gif", writer='pillow')
-
+    
 #Generate .csv files where the three test metrics are stored
 #We measure the mean squared error, the  relative error and
 #the maximum absolute error for 30 test initial conditions and
 #store in these files the mean of such values
-def save_test_results(pde_name,model,testloader,preserve_norm=None):
+def save_test_results(pde_name,model,testloader,preserve_norm=None,is_noise=None):
     
     if not os.path.exists('saved_test_results'):
         os.mkdir('saved_test_results')
@@ -107,7 +116,7 @@ def save_test_results(pde_name,model,testloader,preserve_norm=None):
     
     model.to('cpu');
     X,Y = next(iter(testloader))
-    X,Y = X.to('cpu'), Y.to('cpu')
+    X,Y = (X.to('cpu')), (Y.to('cpu'))
     Traj = torch.cat((X,Y),dim=1)
     res = X
     
@@ -129,31 +138,53 @@ def save_test_results(pde_name,model,testloader,preserve_norm=None):
         relative_error_list.append(torch.mean((torch.linalg.norm((res-Traj[:,j:j+1]).view(len(X),-1),dim=1,ord=2)  / torch.linalg.norm((Traj[:,j:j+1]).view(len(X),-1),dim=1,ord=2))).item())
         res = model(res)
     
+    noise_tag = "Noise" if is_noise else "NoNoise"
+    if pde_name=="linadv":
+        pde_tag = "Linadv"
+    elif pde_name=="heat":
+        pde_tag = "Heat"
+    else:
+        pde_tag = "Fisher"
+    
     #Save the results
     if pde_name == 'linadv':
+                
         if preserve_norm==True:
-            np.savetxt(f"saved_test_results/{pde_name}_AverageMSE_Conserved_Test30.csv", mseList, delimiter=",")
-            np.savetxt(f"saved_test_results/{pde_name}_MaxError_Conserved_Test30.csv", max_errorList, delimiter=",")
-            np.savetxt(f"saved_test_results/{pde_name}_RelativeError_Conserved_Test30.csv", relative_error_list, delimiter=",")
+                        
+            np.savetxt(f"saved_test_results/{pde_tag}AverageMSEPreserve{noise_tag}.csv", mseList, delimiter=",")
+            np.savetxt(f"saved_test_results/{pde_tag}MaxErrorPreserve{noise_tag}.csv", max_errorList, delimiter=",")
+            np.savetxt(f"saved_test_results/{pde_tag}RelativeErrorPreserve{noise_tag}.csv", relative_error_list, delimiter=",")
+            
         else:
-            np.savetxt(f"saved_test_results/{pde_name}_AverageMSE_NonConserved_Test30.csv", mseList, delimiter=",")
-            np.savetxt(f"saved_test_results/{pde_name}_MaxError_NonConserved_Test30.csv", max_errorList, delimiter=",")
-            np.savetxt(f"saved_test_results/{pde_name}_RelativeError_NonConserved_Test30.csv", relative_error_list, delimiter=",")
+            
+            np.savetxt(f"saved_test_results/{pde_tag}AverageMSENoPreserve{noise_tag}.csv", mseList, delimiter=",")
+            np.savetxt(f"saved_test_results/{pde_tag}MaxErrorNoPreserve{noise_tag}.csv", max_errorList, delimiter=",")
+            np.savetxt(f"saved_test_results/{pde_tag}RelativeErrorNoPreserve{noise_tag}.csv", relative_error_list, delimiter=",")
     else:
-        np.savetxt(f"saved_test_results/{pde_name}_AverageMSE_Test30.csv", mseList, delimiter=",")
-        np.savetxt(f"saved_test_results/{pde_name}_MaxError_Test30.csv", max_errorList, delimiter=",")
-        np.savetxt(f"saved_test_results/{pde_name}_RelativeError_Test30.csv", relative_error_list, delimiter=",")
-        
+        np.savetxt(f"saved_test_results/{pde_tag}AverageMSE{noise_tag}.csv", mseList, delimiter=",")
+        np.savetxt(f"saved_test_results/{pde_tag}MaxError{noise_tag}.csv", max_errorList, delimiter=",")
+        np.savetxt(f"saved_test_results/{pde_tag}RelativeError{noise_tag}.csv", relative_error_list, delimiter=",")
     print("Results saved or updated in the directory 'saved_test_results'")
     
-def generate_error_plots(pde_name,model,testloader,preserve_norm=None):
+    
+
+#Generate the error plots from the .csv files
+def generate_error_plots(pde_name,model,testloader,preserve_norm=None,is_noise=None):
     
     #Generate the results
-    save_test_results(pde_name,model,testloader,preserve_norm)
+    save_test_results(pde_name,model,testloader,preserve_norm,is_noise)
     
     #List of plots we show
     namePlots = ["MaxError", "AverageMSE", "RelativeError"]
     labels = [r"$\texttt{maxE}(j)$", r"$\texttt{mse}(j)$", r"$\texttt{rE}(j)$"]
+    
+    noise_tag = "Noise" if is_noise else "NoNoise"
+    if pde_name=="linadv":
+        pde_tag = "Linadv"
+    elif pde_name=="heat":
+        pde_tag = "Heat"
+    else:
+        pde_tag = "Fisher"
     
     if not os.path.exists('saved_plots'):
         os.mkdir('saved_plots')
@@ -165,12 +196,12 @@ def generate_error_plots(pde_name,model,testloader,preserve_norm=None):
             is_data_unconstr = False
             
             try:
-                dfConstr = pd.read_csv(f'saved_test_results/{pde_name}_{name}_Conserved_Test30.csv',header=None)
+                dfConstr = pd.read_csv(f'saved_test_results/{pde_tag}{name}Preserve{noise_tag}.csv',header=None)
                 is_data_constr = True
             except:
                 print(f"Missing data for the {name} of the conserved case")
             try:
-                dfUnconstr = pd.read_csv(f'saved_test_results/{pde_name}_{name}_NonConserved_Test30.csv',header=None)
+                dfUnconstr = pd.read_csv(f'saved_test_results/{pde_tag}{name}NoPreserve{noise_tag}.csv',header=None)
                 is_data_unconstr = True
             except:
                 print(f"Missing data for the {name} of the non conserved case")
@@ -199,16 +230,16 @@ def generate_error_plots(pde_name,model,testloader,preserve_norm=None):
                 ylist = np.linspace(ymin,ymax,4)
                 plt.yticks(ylist)
                 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-                plt.savefig(f"saved_plots/{pde_name}_{name}_BatchOf30.pdf", format="pdf",bbox_inches='tight')
+                plt.savefig(f"saved_plots/{pde_tag}{name}{noise_tag}.pdf", format="pdf",bbox_inches='tight')                
     else:
         for it, name in enumerate(namePlots):
             is_data = False
             
             try:
-                df = pd.read_csv(f'saved_test_results/{pde_name}_{name}_Test30.csv',header=None)
+                df = pd.read_csv(f'saved_test_results/{pde_tag}{name}{noise_tag}.csv',header=None)
                 is_data = True
             except:
-                print(f"Missing data for the {name} of {pde_name}")
+                print(f"Missing data for the {name} of {pde_name}, noise {noise_tag}")
                 
             xx = np.arange(0,40)
             if is_data:
@@ -223,7 +254,7 @@ def generate_error_plots(pde_name,model,testloader,preserve_norm=None):
                 ylist = np.linspace(ymin,ymax,4)
                 plt.yticks(ylist)
                 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-                plt.savefig(f"saved_plots/{pde_name}_{name}_BatchOf30.pdf", format="pdf",bbox_inches='tight')
+                plt.savefig(f"saved_plots/{pde_tag}{name}{noise_tag}.pdf", format="pdf",bbox_inches='tight')
             else:
                 print(f"There is nothing saved to generate the plots of {name} in {pde_name}")
     print("Plots saved or updated in the directory 'saved plots'")

@@ -2,12 +2,13 @@ from torch.utils.data import Dataset, DataLoader
 import pickle
 import numpy as np
 import torch
+import os
 
 #Class generating the dataset given the data points
 class dataset(Dataset):
-  def __init__(self,x,y,device):
-    self.x = torch.from_numpy(x.astype(np.float32)).to(device)
-    self.y = torch.from_numpy(y.astype(np.float32)).to(device)
+  def __init__(self,x,y,device,np_dtype):
+    self.x = torch.from_numpy(x.astype(np_dtype)).to(device)
+    self.y = torch.from_numpy(y.astype(np_dtype)).to(device)
     self.length = self.x.shape[0]
  
   def __getitem__(self,idx):
@@ -16,13 +17,15 @@ class dataset(Dataset):
     return self.length
 
 #Method splitting the dataset into train and test sets
-def get_train_test_split(pde_name='linadv',timesteps=5,device='cpu'):
+def get_train_test_split(pde_name,device,timesteps=5,dtype=torch.float32):
+    
+    np_dtype = np.float32 if dtype==torch.float32 else np.float64
     
     #Load the data points
     with open(f'data/data_{pde_name}.pickle','rb') as file:
-          data_train = pickle.load(file)
+      data_train = pickle.load(file)
     with open(f'data/data_{pde_name}_verification.pickle','rb') as file:
-          data_test = pickle.load(file)
+      data_test = pickle.load(file)
     
     #Select the initial conditions with norm larger than 10
     #that are then used to train the network for the Fisher equation
@@ -64,7 +67,7 @@ def get_train_test_split(pde_name='linadv',timesteps=5,device='cpu'):
             label_test[i,j] = data_test[i][j+1]
     
     #Create the dataloaders given the obtained splitting
-    trainset = dataset(input_train,label_train,device)
-    testset = dataset(input_test,label_test,device)
+    trainset = dataset(input_train,label_train,device,np_dtype=np_dtype)
+    testset = dataset(input_test,label_test,device,np_dtype=np_dtype)
     
     return trainset, testset
