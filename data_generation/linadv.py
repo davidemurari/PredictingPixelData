@@ -5,6 +5,7 @@ condition function
 from firedrake import *
 import numpy as np
 import matplotlib.pylab as plt
+from firedrake.pyplot import plot, tripcolor
 
 #A test initial condition
 def f(x,y):
@@ -55,7 +56,8 @@ def linadv(ic=f,para=parameters()):
     #Set up initial condition
     u0 = Function(U)
     x, y = SpatialCoordinate(U.mesh())
-    u0.interpolate(ic(x,y))
+    # u0.interpolate(ic(x,y))
+    u0.dat.data[:] = np.random.rand(u0.dat.data[:].size)
 
     # #Plot ics (for debugging)
     # plt.matshow(matrify(u0,para))
@@ -91,8 +93,13 @@ def linadv(ic=f,para=parameters()):
         time.append(t)
 
         u0.assign(u1)
-        
 
+        # tripcolor(u0)
+        # plt.show(block=False)
+        # plt.pause(0.1)
+        # plt.close()
+
+        
     return time, sol
 
 
