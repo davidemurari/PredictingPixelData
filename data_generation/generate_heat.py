@@ -5,7 +5,7 @@ import subprocess
 import time
 
 
-MaxProcesses = 8
+MaxProcesses = 12
 Processes = []
 
 def checkrunning():
