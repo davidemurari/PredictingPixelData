@@ -12,6 +12,7 @@ def f(x,y):
     return sin(2*pi*(x-0.2)) * cos(2*pi*(y-0.3))
 
 
+
 #Visualise a firedrake vector as a matrix, only works if structure is
 #exactly the same in x and y direction. Implementation hacky AF for time.
 def matrify(fd,para):
@@ -41,7 +42,7 @@ class parameters:
         self.c = .01 #rate of dissipation
         self.M = 100 #Spatial resolution
         dx = 1/self.M
-        self.dt = 10 * (0.24 * dx**2 / self.c)
+        self.dt = (0.24 * dx**2 / self.c)
         self.N = 10 #Temporal resolution
         self.degree = 1 #Spatial degree
         self.T = self.N*self.dt #End time
