@@ -14,7 +14,13 @@ from generate_plots import generate_error_plots
 
 from get_data import download_data #downloads the missing data
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    device_name = 'cuda:0'
+elif torch.backends.mps.is_available():
+    device_name = 'mps'
+else:
+    device_name = 'cpu'
+device = torch.device(device_name)
 
 #Setting the parameters for the plots
 matplotlib.rcParams['text.usetex'] = True
