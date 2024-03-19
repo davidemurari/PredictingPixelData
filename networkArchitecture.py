@@ -34,10 +34,10 @@ class network(nn.Module):
         
         if not pde_name=="linadv":
             self.F = nn.Sequential(
-                    nn.Conv2d(1,2,kernel_size=kernel_size,padding=pad,padding_mode=pad_mode,bias=bias),
-                    nn.ReLU(),
-                    nn.Conv2d(2,1,kernel_size=1,bias=False)
-                )
+                nn.Conv2d(1,2,kernel_size=kernel_size,padding=pad,padding_mode=pad_mode,bias=True),
+                nn.ReLU(),
+                nn.Conv2d(2,1,kernel_size=1,bias=False)
+            )
             self.F[-1].weight.data = torch.tensor([1.,-1.]).reshape(*self.F[-1].weight.data.shape)
             self.F[-1].weight.requires_grad = requires_grad_second
             
@@ -47,6 +47,12 @@ class network(nn.Module):
             self.K2 = nn.Conv2d(num_chans,1,kernel_size=1,bias=False)
             self.K2.weight.data = torch.ones_like(self.K2.weight.data)
             self.A = nn.Conv2d(1,1,kernel_size=kernel_size,padding=pad,padding_mode=pad_mode,bias=False)
+            self.F = nn.Sequential(
+                nn.Conv2d(1,2**3,kernel_size=kernel_size,padding=pad,padding_mode=pad_mode,bias=True),
+                nn.ReLU(),
+                # nn.Conv2d(2**3,2**3,kernel_size=kernel_size,padding=pad,padding_mode=pad_mode,bias=True),
+                # nn.ReLU(),
+                nn.Conv2d(2**3,1,kernel_size=1,bias=False))
             
     def energy(self,U):
         return self.K2(torch.relu(self.K1(U))**2).reshape(len(U),-1).sum(dim=1)
@@ -64,10 +70,12 @@ class network(nn.Module):
     
     def vecField(self,U):
         if self.pde_name=="linadv":
-            grad = self.gradient(U)
+            grad = self.F(U)
             A = self.A(grad)
-            At = F.conv_transpose2d(self.circular_padding(grad),self.A.weight,padding=4,stride=1)
-            return A#-At
+            At = F.conv_transpose2d(self.circular_padding(grad),self.A.weight,padding=6,stride=1)
+            # print(A.shape)
+            # print(At.shape)
+            return A-At
         else:
             return self.F(U)
     
@@ -84,5 +92,5 @@ class network(nn.Module):
                 lam = self.lagrange_multiplier(U,energy_0)
                 U = U + lam.view(-1,1,1,1) * self.gradient(U)
             else: 
-                U = U + self.dt/self.nlayers * self.vecField(U)              
+                U = U + self.dt/self.nlayers * self.vecField(U)
         return U

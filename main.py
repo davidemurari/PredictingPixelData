@@ -10,7 +10,7 @@ from utils import relu_squared
 from create_dataset import get_train_test_split
 from networkArchitecture import network
 from training import train_network
-from generate_plots import generate_error_plots
+from generate_plots import *
 
 from get_data import download_data #downloads the missing data
 
@@ -58,7 +58,7 @@ if pde_name=='linadv':
 train = True
 
 timesteps = 5
-kernel_size = 5
+kernel_size = 7
 preserve_norm = conserve_norm
 weight_decay = 0.
 is_linear = False
@@ -189,8 +189,8 @@ if showPlots:
 
     #Generation of the plots reported also in the paper
     #generate_gif_predicted(pde_name,model,X,timesteps_test)
-    #generate_gif_true(pde_name,X,Y,timesteps_test)
-    #generate_gif_error(pde_name,model,X,Y,timesteps_test)
+    generate_gif_true(pde_name,X,Y,timesteps_test)
+    generate_gif_error(pde_name,model,X,Y,timesteps_test)
     if pde_name=='linadv':
         generate_error_plots(pde_name,model,testloader,conserve_norm)
     else:
