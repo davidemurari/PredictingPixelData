@@ -81,12 +81,7 @@ We now describe the scripts included in the repository that are called by the *m
 ##### networkArchitecture.py
 
 - Class : network
-  pde_name='linadv',
-                 kernel_size=5,
-                 nlayers=3,
-                 dt=0.1,
-                 preserve_norm=False,
-                 dtype=torch.float32
+
   - Parameters :
     
     - *pde_name* : String variable representing the PDE of interest.
