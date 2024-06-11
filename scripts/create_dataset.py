@@ -21,10 +21,18 @@ def get_train_test_split(pde_name,device,timesteps=5,dtype=torch.float32):
     
     np_dtype = np.float32 if dtype==torch.float32 else np.float64
     
+    working_directory = os.getcwd()
+    os.chdir('data')
+    
+    name = f"data_{pde_name}.pickle" if pde_name=="linadv" \
+        else f"data_{pde_name}_periodic.pickle"
+    name_verification = f"data_{pde_name}_verification.pickle" if pde_name=="linadv" \
+        else f"data_{pde_name}_periodic_verification.pickle"
+    
     #Load the data points
-    with open(f'data/data_{pde_name}.pickle','rb') as file:
+    with open(name,'rb') as file:
       data_train = pickle.load(file)
-    with open(f'data/data_{pde_name}_verification.pickle','rb') as file:
+    with open(name_verification,'rb') as file:
       data_test = pickle.load(file)
     
     #Select the initial conditions with norm larger than 10
@@ -42,7 +50,6 @@ def get_train_test_split(pde_name,device,timesteps=5,dtype=torch.float32):
       
       data_train = new_data_train
       data_test = new_data_test
-    
     
     #Split the loaded data into training and testing sets
     dim1,dim2 = data_train[1][0].shape
@@ -69,5 +76,7 @@ def get_train_test_split(pde_name,device,timesteps=5,dtype=torch.float32):
     #Create the dataloaders given the obtained splitting
     trainset = dataset(input_train,label_train,device,np_dtype=np_dtype)
     testset = dataset(input_test,label_test,device,np_dtype=np_dtype)
+    
+    os.chdir(working_directory)
     
     return trainset, testset
