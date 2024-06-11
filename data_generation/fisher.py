@@ -8,7 +8,7 @@ import numpy.random as random
 
 #A test initial condition
 def f(x,y):
-    return 10 * sin( pi * (x-1)) * sin(pi * (y-1))
+    return sin(2*pi*(x-0.2)) * cos(2*pi*(y-0.3))
 
 
 #Visualise a firedrake vector as a matrix, only works if structure is
@@ -47,8 +47,8 @@ class parameters:
 #class)
 def fisher(ic=f,para=parameters()):
 
-    mesh = UnitSquareMesh(para.M,para.M,quadrilateral=True)
-    para.mesh1d = UnitIntervalMesh(para.M)
+    mesh = PeriodicUnitSquareMesh(para.M,para.M,quadrilateral=True)
+    para.mesh1d = PeriodicUnitIntervalMesh(para.M)
     U = FunctionSpace(mesh,'CG',para.degree)
 
     #Set up initial condition
@@ -75,10 +75,10 @@ def fisher(ic=f,para=parameters()):
         + para.alpha * inner(grad(u),grad(phi)) * dx \
         - nl * phi * dx
 
-    bcs = DirichletBC(U, Constant(0), (1,2,3,4))
+    #bcs = DirichletBC(U, Constant(0), (1,2,3,4))
     
     #Build solver
-    prob = NonlinearVariationalProblem(F,u1,bcs=bcs)
+    prob = NonlinearVariationalProblem(F,u1)
     solver = NonlinearVariationalSolver(prob,
                                         solver_parameters={#
                                             'ksp_type': 'preonly',

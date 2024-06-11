@@ -8,17 +8,19 @@ import pickle
 import random
 import os
 import numpy.random as random
-from firedrake import sin, pi, exp
+from firedrake import sin, pi, exp, cos
 #import numpy.clip as clip
 #local
 import heat
 
 #Generate a 'random' function
 def rand_func(x,y):
-    k = random.randint(2,7)
-    a = random.normal(1,0.5)
-    #a = clip(a,-2,2)
-    return a * sin(k*pi*(x-1)) * sin(k*pi*(y-1))
+    shift_x = random.random()
+    shift_y = random.random()
+    int1 = random.randint(5,8)
+    int2 = random.randint(5,8)
+    
+    return sin(2 * pi * int1 * (x-shift_x)) * cos(2 * pi * int2 * (y-shift_y))
 
 
 if __name__=="__main__":
