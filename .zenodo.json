@@ -11,8 +11,8 @@
 	    "orcid": "0000-0002-1095-6685"
 	}
     ],
-    "description": "Code suppliment to `Predictions based on pixel data: Insights from PDEs and finite differences' by Celledoni, Jackaman, Murari and Owren.",
+    "description": "Code suppliment to `Predictions based on pixel data: Insight from PDEs and finite differences' by Celledoni, Jackaman, Murari and Owren.",
     "license": "MIT",
-    "title": "Implementation used in `Predictions based on pixel data: Insights from PDEs and finite differences'",
+    "title": "Implementation used in `Predictions based on pixel data: Insight from PDEs and finite differences'",
     "upload_type": "software"
 }
