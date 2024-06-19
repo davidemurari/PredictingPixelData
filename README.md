@@ -3,7 +3,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11619634.svg)](https://doi.org/10.5281/zenodo.11619634)
 
 
-This repository is a suppliment to the manuscript **Predictions based on pixel data: Insight from PDEs and finite differences** by _Elena Celledoni, James Jackaman, Davide Murari and Brynjulf Owren_. 
+This repository is a suppliment to the manuscript **Predictions based on pixel data: Insights from PDEs and finite differences** by _Elena Celledoni, James Jackaman, Davide Murari and Brynjulf Owren_. 
 
 Necessary installed libraries can be installed with the line
 
