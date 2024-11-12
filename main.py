@@ -53,7 +53,7 @@ batch_size = 32
 
 dim = 100 #Size of the input matrices (100x100)
 alpha = .01 #Diffusivity constant
-xx = np.linspace(0,1,dim) #Spatial discretization of [0,1]
+xx = np.linspace(0,1,dim+1) #Spatial discretization of [0,1]
 dx = xx[1]-xx[0] #Spatial step
 
 kernel_size = 5
